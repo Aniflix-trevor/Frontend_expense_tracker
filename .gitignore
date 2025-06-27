@@ -1,24 +1,61 @@
-# Logs
-logs
+# Node.js / React
+node_modules/
+dist/
+.tmp/
+.cache/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+.npm
+.eslintcache
 
-node_modules
-dist
-dist-ssr
+# Vite
+.vite/
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+# Build files
+build/
+dist/
+.serverless/
+.coverage
+
+# Flask specific
+instance/
+.webassets-cache
+
+# Testing
+coverage/
+htmlcov/
+.pytest_cache/
