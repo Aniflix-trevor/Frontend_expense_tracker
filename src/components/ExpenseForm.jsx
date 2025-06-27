@@ -1,26 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-export default function ExpenseForm({ onSubmit, categories }) {
+export default function ExpenseForm({ onSubmit, categories, initialData }) {
   const [formData, setFormData] = useState({
     amount: '',
     description: '',
-    date: new Date().toISOString().split('T')[0], // Default to today
+    date: new Date().toISOString().split('T')[0],
     category_id: ''
   });
+  const [loading, setLoading] = useState(false);
+
+  // Reset form when initialData changes (for edit mode)
+  useEffect(() => {
+    setFormData({
+      amount: initialData?.amount || '',
+      description: initialData?.description || '',
+      date: initialData?.date || new Date().toISOString().split('T')[0],
+      category_id: initialData?.category?.id || ''
+    });
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.amount || !formData.description) {
-      toast.error('Amount and description are required');
+    
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      toast.error('Please enter a valid amount');
       return;
     }
-    onSubmit(formData);
+    if (!formData.description.trim()) {
+      toast.error('Description is required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await onSubmit({
+        ...formData,
+        amount: parseFloat(formData.amount).toFixed(2) // Ensure 2 decimal places
+      });
+      
+      // Only reset if not in edit mode
+      if (!initialData) {
+        setFormData({
+          amount: '',
+          description: '',
+          date: new Date().toISOString().split('T')[0],
+          category_id: ''
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,7 +103,7 @@ export default function ExpenseForm({ onSubmit, categories }) {
         />
       </div>
 
-      {categories && (
+      {categories && categories.length > 0 && (
         <div>
           <label className="block text-sm font-medium text-text-secondary mb-1">
             Category
@@ -91,9 +126,12 @@ export default function ExpenseForm({ onSubmit, categories }) {
 
       <button
         type="submit"
-        className="w-full bg-primary text-dark-900 py-2 px-4 rounded-md hover:bg-opacity-90 transition font-medium"
+        className={`w-full py-2 px-4 rounded-md transition font-medium ${
+          loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-primary text-dark-900 hover:bg-opacity-90'
+        }`}
+        disabled={loading}
       >
-        Add Expense
+        {loading ? 'Processing...' : initialData ? 'Update Expense' : 'Add Expense'}
       </button>
     </form>
   );
