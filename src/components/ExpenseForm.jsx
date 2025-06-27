@@ -2,32 +2,36 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 export default function ExpenseForm({ onSubmit, categories, initialData }) {
+  // State Management
   const [formData, setFormData] = useState({
     amount: '',
     description: '',
-    date: new Date().toISOString().split('T')[0],
-    category_id: ''
+    date: new Date().toISOString().split('T')[0], // Defaults to today
+    category_id: '' // Matches CategoryList's category.id
   });
   const [loading, setLoading] = useState(false);
 
-  // Reset form when initialData changes (for edit mode)
+  // Edit Mode Initialization
   useEffect(() => {
     setFormData({
       amount: initialData?.amount || '',
       description: initialData?.description || '',
       date: initialData?.date || new Date().toISOString().split('T')[0],
-      category_id: initialData?.category?.id || ''
+      category_id: initialData?.category?.id || '' // Sync with categoryService data
     });
   }, [initialData]);
 
+  // Input Change Handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validation (matches backend expectations)
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
       toast.error('Please enter a valid amount');
       return;
@@ -41,17 +45,16 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
     try {
       await onSubmit({
         ...formData,
-        amount: parseFloat(formData.amount).toFixed(2) // Ensure 2 decimal places
+        amount: parseFloat(formData.amount).toFixed(2) // Ensures 2 decimal places
       });
       
-      // Only reset if not in edit mode
+      // Reset only for new entries (preserves edit form state)
       if (!initialData) {
-        setFormData({
+        setFormData(prev => ({ ...prev, 
           amount: '',
           description: '',
-          date: new Date().toISOString().split('T')[0],
           category_id: ''
-        });
+        }));
       }
     } finally {
       setLoading(false);
@@ -60,6 +63,7 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-dark-800 p-6 rounded-lg border border-dark-700">
+      {/* Amount Field */}
       <div>
         <label className="block text-sm font-medium text-text-secondary mb-1">
           Amount ($)
@@ -73,9 +77,11 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
           onChange={handleChange}
           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
           required
+          disabled={loading}
         />
       </div>
 
+      {/* Description Field */}
       <div>
         <label className="block text-sm font-medium text-text-secondary mb-1">
           Description
@@ -87,9 +93,11 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
           onChange={handleChange}
           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
           required
+          disabled={loading}
         />
       </div>
 
+      {/* Date Field */}
       <div>
         <label className="block text-sm font-medium text-text-secondary mb-1">
           Date
@@ -99,11 +107,14 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
           name="date"
           value={formData.date}
           onChange={handleChange}
+          max={new Date().toISOString().split('T')[0]} // No future dates
           className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          disabled={loading}
         />
       </div>
 
-      {categories && categories.length > 0 && (
+      {/* Category Dropdown */}
+      {categories?.length > 0 && (
         <div>
           <label className="block text-sm font-medium text-text-secondary mb-1">
             Category
@@ -113,6 +124,7 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
             value={formData.category_id}
             onChange={handleChange}
             className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-md text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            disabled={loading}
           >
             <option value="">Uncategorized</option>
             {categories.map(category => (
@@ -124,6 +136,7 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
         </div>
       )}
 
+      {/* Submit Button */}
       <button
         type="submit"
         className={`w-full py-2 px-4 rounded-md transition font-medium ${

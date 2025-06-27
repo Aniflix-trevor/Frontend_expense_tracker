@@ -1,20 +1,39 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/**
+ * Tailwind CSS Directives
+ * These inject Tailwind's base, component, and utility styles.
+ * Order matters in the provided sequece
+ */
+@tailwind base;       /* Resets and basic element styles */
+@tailwind components; /* Component classes (buttons, cards, etc.) */
+@tailwind utilities;  /* Utility classes (padding, margins, etc.) */
 
-/* Custom base styles */
+/**
+ * Global Body Styles
+ * =================
+ * Sets the app-wide background and text colors following the dark theme.
+ * Uses Inter font for better readability (matches Gemini's UI).
+ */
 body {
-  @apply bg-dark-900 text-text-primary;
-  font-family: 'Inter', sans-serif; /* Gemini-like font */
+  @apply bg-dark-900 text-text-primary; /* From your Tailwind config */
+  font-family: 'Inter', sans-serif;
+  /* Note: Ensure Inter font is loaded in your project */
 }
 
-/* Scrollbar styling (optional) */
+/**
+ * Custom Scrollbar Styling
+ * 
+ * Modern scrollbar that matches the dark theme.
+ */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 8px; /* Slim scrollbar for minimal intrusion */
 }
 ::-webkit-scrollbar-track {
-  @apply bg-dark-800;
+  @apply bg-dark-800; /* Matches container backgrounds */
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-dark-700 rounded-full;
+  @apply bg-dark-700 rounded-full; /* Rounded pill shape */
+  &:hover {
+    @apply bg-dark-600; /* Slightly lighter on hover */
+  }
 }
+

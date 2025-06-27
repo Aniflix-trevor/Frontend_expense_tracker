@@ -4,25 +4,55 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 
+/**
+ * ProtectedRoute - Wrapper for authenticated routes
+ * - Redirects to /login if no JWT token exists
+ * - Uses replace to prevent back-navigation loops
+ */
 const ProtectedRoute = ({ children }) => {
-  const { token } = useAuth();
+  const { token } = useAuth(); // Checks localStorage for token via AuthContext
   return token ? children : <Navigate to="/login" replace />;
 };
 
+/**
+ * AppRoutes - Main routing configuration
+ * - Public routes: /login, /register
+ * - Protected routes: /dashboard/*
+ * - Fallback: Redirects to /dashboard (protected)
+ */
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      {/* Public Routes */}
+      <Route 
+        path="/login" 
+        element={<Login />} 
+        // No auth required - accessible even when logged in
+      />
+      <Route 
+        path="/register" 
+        element={<Register />} 
+        // Registration doesn't require authentication
+      />
+
+      {/* Protected Routes */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
+            {/* Wrapped in auth check */}
             <Dashboard />
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
+      {/* Fallback Route */}
+      <Route 
+        path="*" 
+        element={<Navigate to="/dashboard" replace />} 
+        // Handles 404s by redirecting to dashboard
+        // replace prevents history stack pollution
+      />
     </Routes>
   );
 };

@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#8AB4F8", // Gemini-like blue for accents
+        primary: "#8AB4F8", //  blue for accents
         dark: {
-          900: "#0F0F0F",  // Pure black (Gemini's main bg)
+          900: "#0F0F0F",  // Pure black 
           800: "#1E1E1E",  // Slightly lighter for containers
           700: "#2D2D2D",  // Borders/divider
         },

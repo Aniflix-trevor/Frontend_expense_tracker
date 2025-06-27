@@ -7,14 +7,17 @@ import CategoryList from '../components/CategoryList';
 import { toast } from 'react-toastify';
 
 export default function Dashboard() {
+  // Authentication context
   const { user, logout } = useAuth();
+
+  // State management
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [editingExpense, setEditingExpense] = useState(null);
-  const [activeTab, setActiveTab] = useState('expenses');
+  const [activeTab, setActiveTab] = useState('expenses'); // Tracks current view
   const [loading, setLoading] = useState(false);
 
-  // Enhanced mock data
+  // Mock data - To be replaced with API calls
   const mockCategories = [
     { id: 1, name: 'Food' },
     { id: 2, name: 'Transport' },
@@ -27,18 +30,19 @@ export default function Dashboard() {
       id: 1,
       amount: '29.99',
       description: 'Groceries',
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split('T')[0], // Today's date
       category: { id: 1, name: 'Food' }
     },
     {
       id: 2,
       amount: '15.50',
       description: 'Bus fare',
-      date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+      date: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Yesterday
       category: { id: 2, name: 'Transport' }
     }
   ];
 
+  // Initialize with mock data
   useEffect(() => {
     loadInitialData();
   }, []);
@@ -48,11 +52,13 @@ export default function Dashboard() {
     setCategories([...mockCategories]);
   };
 
-  // Expense handlers
+  // Expense CRUD Operations 
+
   const handleSubmitExpense = async (expenseData) => {
     setLoading(true);
     try {
       if (editingExpense) {
+        // Update existing expense
         setExpenses(prev => prev.map(exp => 
           exp.id === editingExpense.id ? { 
             ...exp, 
@@ -62,15 +68,16 @@ export default function Dashboard() {
         ));
         toast.success('Expense updated successfully');
       } else {
+        // Create new expense
         const newExpense = {
           ...expenseData,
-          id: Math.max(0, ...expenses.map(e => e.id)) + 1,
+          id: Math.max(0, ...expenses.map(e => e.id)) + 1, // Temporary ID generation
           category: categories.find(c => c.id === expenseData.category_id) || null
         };
         setExpenses(prev => [...prev, newExpense]);
         toast.success('Expense added successfully');
       }
-      setEditingExpense(null);
+      setEditingExpense(null); // Reset edit mode
     } catch (error) {
       toast.error('Operation failed');
     } finally {
@@ -78,12 +85,13 @@ export default function Dashboard() {
     }
   };
 
-  // Category handlers
+  // Category CRUD Operations 
+
   const handleCreateCategory = async (name) => {
     setLoading(true);
     try {
       const newCategory = {
-        id: Math.max(0, ...categories.map(c => c.id)) + 1,
+        id: Math.max(0, ...categories.map(c => c.id)) + 1, // Temporary ID
         name
       };
       setCategories(prev => [...prev, newCategory]);
@@ -99,7 +107,7 @@ export default function Dashboard() {
 
   const handleDeleteCategory = async (id) => {
     try {
-      // Don't allow deletion if category is in use
+      // Prevent deletion if category is referenced
       const isUsed = expenses.some(exp => exp.category?.id === id);
       if (isUsed) {
         throw new Error('Category is in use by expenses');
@@ -112,15 +120,26 @@ export default function Dashboard() {
     }
   };
 
+  // UI Helpers 
+
   const handleEdit = (expense) => {
     setEditingExpense(expense);
-    setActiveTab('expenses');
+    setActiveTab('expenses'); // Switch to expenses tab
+    // Smooth scroll to form
     document.querySelector('#expense-form')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const handleDeleteExpense = (id) => {
+    setExpenses(prev => prev.filter(exp => exp.id !== id));
+    toast.success('Expense deleted successfully');
+  };
+
+  // Render 
 
   return (
     <div className="min-h-screen bg-dark-900 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-primary">
             {user?.email}'s Expense Dashboard
@@ -165,8 +184,11 @@ export default function Dashboard() {
           </button>
         </div>
 
+        {/* Main Content Area */}
         {activeTab === 'expenses' ? (
+          // Expenses Tab
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Expense Form */}
             <div className="lg:col-span-1" id="expense-form">
               <h2 className="text-xl font-semibold mb-4">
                 {editingExpense ? 'Edit Expense' : 'Add New Expense'}
@@ -177,6 +199,8 @@ export default function Dashboard() {
                 initialData={editingExpense}
               />
             </div>
+            
+            {/* Expense List */}
             <div className="lg:col-span-2">
               <div className="bg-dark-800 rounded-lg p-6 border border-dark-700">
                 <div className="flex justify-between items-center mb-4">
@@ -195,7 +219,9 @@ export default function Dashboard() {
             </div>
           </div>
         ) : (
+          // Categories Tab
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Category Form */}
             <div className="lg:col-span-1">
               <h2 className="text-xl font-semibold mb-4">Add Category</h2>
               <CategoryForm 
@@ -203,6 +229,8 @@ export default function Dashboard() {
                 disabled={loading}
               />
             </div>
+            
+            {/* Category List */}
             <div className="lg:col-span-2">
               <div className="bg-dark-800 rounded-lg p-6 border border-dark-700">
                 <h2 className="text-xl font-semibold mb-4">Your Categories</h2>
@@ -220,9 +248,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-
-  function handleDeleteExpense(id) {
-    setExpenses(prev => prev.filter(exp => exp.id !== id));
-    toast.success('Expense deleted successfully');
-  }
 }
