@@ -2,76 +2,71 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+// Import jwt_decode library
+import { jwtDecode } from 'jwt-decode'; //  installed this: npm install jwt-decode
 
-// 1. Context Creation
-
-// Creates authentication context to share user state across components
 const AuthContext = createContext();
 
-// 2. Axios Instance Configuration
-
-// Base setup for API requests (matches Flask backend URL)
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:5555', // Should eventually use VITE_API_URL from .env
+  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:5555',
   headers: {
-    'Content-Type': 'application/json', // Required for Flask's request.json
+    'Content-Type': 'application/json',
   },
 });
 
-// 3. Auth Provider Component
-
 export const AuthProvider = ({ children }) => {
-  // State Management
-  const [user, setUser] = useState(null); // { email } - minimal user data
-  const [token, setToken] = useState(localStorage.getItem('token') || null); // JWT storage
-  const [loading, setLoading] = useState(false); // Global loading state
+  const [user, setUser] = useState(null); // { email, id }
+  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // 4. Token Synchronization Effect
-  
-  // Runs when token changes to:
-  // - Update axios headers
-  // - Persist to localStorage
-  // - Maintain user session
+  // Helper function to decode JWT and get user ID
+  const getUserIdFromToken = (jwtToken) => {
+    try {
+      const decodedToken = jwtDecode(jwtToken);
+      // 'identity' is the key Flask-JWT-Extended uses for the subject of the token (your user.id)
+      return decodedToken.sub;
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     if (token) {
-      // Attach token to all future requests
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      localStorage.setItem('token', token); // Persistent login
-      
-      // Minimal user state (backend doesn't have profile endpoint)
-      setUser({ email: localStorage.getItem('userEmail') }); 
+      localStorage.setItem('token', token);
+
+      // Extract user ID from token and set user state
+      const userId = getUserIdFromToken(token);
+      const userEmail = localStorage.getItem('userEmail'); // Still useful for displaying email
+      if (userId) {
+        setUser({ email: userEmail, id: userId });
+      } else {
+        // If token is invalid or id cannot be extracted, log out
+        logout();
+      }
     } else {
-      // Clear auth state
       delete api.defaults.headers.common['Authorization'];
       localStorage.removeItem('token');
       localStorage.removeItem('userEmail');
+      setUser(null);
     }
   }, [token]);
 
-  // 5. Authentication Methods
-  
-
-  /**
-   * Handles user login
-   * @param {string} email 
-   * @param {string} password 
-   * @throws {Error} On failed login
-   */
   const login = async (email, password) => {
     try {
       setLoading(true);
       const response = await api.post('/login', { email, password });
-      
-      // Update auth state
-      setToken(response.data.token);
-      localStorage.setItem('userEmail', email);
-      setUser({ email });
+
+      const newToken = response.data.token;
+      setToken(newToken);
+      localStorage.setItem('userEmail', email); // Keep user email for display
+      // User ID will be set by the useEffect when token changes
       
       toast.success('Logged in successfully!');
       navigate('/dashboard');
     } catch (error) {
-      // Unified error handling
       const message = error.response?.data?.error || 'Login failed';
       toast.error(message);
       throw new Error(message);
@@ -80,11 +75,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Handles user registration
-   * @param {Object} userData - { email, password, full_name }
-   * @throws {Error} On failed registration
-   */
   const register = async (userData) => {
     try {
       setLoading(true);
@@ -93,12 +83,12 @@ export const AuthProvider = ({ children }) => {
         password: userData.password,
         full_name: userData.full_name
       });
-      
-      // Auto-login after registration
-      setToken(response.data.token);
-      localStorage.setItem('userEmail', userData.email);
-      setUser({ email: userData.email });
-      
+
+      const newToken = response.data.token;
+      setToken(newToken);
+      localStorage.setItem('userEmail', userData.email); // Keep user email for display
+      // User ID will be set by the useEffect when token changes
+
       toast.success('Registration successful!');
       navigate('/dashboard');
     } catch (error) {
@@ -110,10 +100,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Handles user logout
-   * Clears all auth state and redirects
-   */
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -121,24 +107,18 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
-  // 6. Context Provider
-  
-  // Exposes auth state and methods to child components
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      token, 
-      loading, 
-      login, 
-      register, 
-      logout 
+    <AuthContext.Provider value={{
+      user,
+      token,
+      loading,
+      login,
+      register,
+      logout
     }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// 7. Custom Hook
-
-// Shortcut for accessing auth context
 export const useAuth = () => useContext(AuthContext);
