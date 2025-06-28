@@ -8,7 +8,8 @@ export default {
         dark: {
           900: "#0F0F0F",  // Pure black 
           800: "#1E1E1E",  // Slightly lighter for containers
-          700: "#2D2D2D",  // Borders/divider
+          700: "#2D2D2D",  // Borders/
+          600: "#3C3C3C"
         },
         text: {
           primary: "#E1E1E1", // Main text

@@ -14,9 +14,9 @@
  * Uses Inter font for better readability (matches Gemini's UI).
  */
 body {
-  @apply bg-dark-900 text-text-primary; /* From your Tailwind config */
+  @apply bg-dark-900 text-text-primary; /* From Tailwind config */
   font-family: 'Inter', sans-serif;
-  /* Note: Ensure Inter font is loaded in your project */
+  
 }
 
 /**
