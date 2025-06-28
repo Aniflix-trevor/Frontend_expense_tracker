@@ -5,21 +5,16 @@ import { Link } from 'react-router-dom';
 export default function Home() {
   return (
     <div
-      className="flex-grow text-text-primary flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
-      style={{
-        // 1. Set the background image URL. The path starts from the 'public' folder.
-        backgroundImage: 'url("/images/01000000-0aff-0242-0b7d-08dbae85de45_w1080_h608.avif")', // <--- UPDATE THIS PATH TO YOUR IMAGE
-        // 2. Cover the entire element
-        backgroundSize: 'cover',
-        // 3. Center the image
-        backgroundPosition: 'center',
-        // 4. Fixed background so it doesn't scroll with content (optional, but nice)
-        backgroundAttachment: 'fixed',
-        // 5. Add an overlay for text readability (using a transparent dark color)
-        backgroundColor: 'rgba(15, 15, 15, 0.7)', // Overlay for the image (dark-900 with 70% opacity)
-        backgroundBlendMode: 'overlay', // Blend the overlay color with the image
-      }}
-    >
+  className="h-[90vh] flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8" 
+  style={{
+    backgroundImage: 'url("/images/01000000-0aff-0242-0b7d-08dbae85de45_w1080_h608.avif")',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    backgroundColor: 'rgba(15, 15, 15, 0.7)',
+    backgroundBlendMode: 'overlay',
+  }}
+>
       <div className="max-w-4xl text-center z-10"> {/* z-10 ensures text is above overlay */}
         <h1 className="text-5xl font-extrabold text-primary mb-6 animate-fade-in-up">
           Track Your Expenses, Master Your Finances.
