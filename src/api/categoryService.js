@@ -70,16 +70,12 @@ export const createCategory = async (name, user_id) => {
 
 /**
  * Deletes a category by ID.
- * Your backend's `CategoriesResource` does not have a DELETE method.
- * If you need deletion functionality, your backend friend needs to add a DELETE method
- * to `CategoriesResource` that accepts a category ID (e.g., `/categories/<int:category_id>`).
- *
+ * currently backend's `CategoriesResource` does not have a DELETE method.
  * For now, I'm commenting out the real API call and leaving a placeholder/error.
- * You should discuss with your backend friend about adding this.
+ 
  */
 export const deleteCategory = async (id) => {
-  // --- Backend Sync Requirement: Your backend's categories.py currently does NOT have a DELETE method ---
-  // You need to inform your backend friend to add a DELETE method to the CategoriesResource.
+  // --- Backend Sync Requirement: backend's categories.py currently does NOT have a DELETE method ---
   // It should look something like this in categories.py:
   /*
   from flask_restful import Resource, reqparse
@@ -102,7 +98,7 @@ export const deleteCategory = async (id) => {
   */
   // --- End of Backend Sync Requirement ---
 
-  console.warn("Category deletion not yet implemented on the backend. Simulating deletion locally.");
+  console.warn("Category deletion updating pending on the backend. Simulating deletion locally.");
 
   // Temporary mock for delete:
   return new Promise((resolve, reject) => {

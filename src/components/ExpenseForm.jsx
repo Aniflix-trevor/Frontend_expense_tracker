@@ -66,7 +66,7 @@ export default function ExpenseForm({ onSubmit, categories, initialData }) {
       {/* Amount Field */}
       <div>
         <label className="block text-sm font-medium text-text-secondary mb-1">
-          Amount ($)
+          Amount (Ksh)
         </label>
         <input
           type="number"

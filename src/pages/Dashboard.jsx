@@ -264,7 +264,7 @@ export default function Dashboard() {
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold">Your Expenses</h2>
                   <div className="text-text-secondary">
-                    Total: ${expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0).toFixed(2)}
+                    Total: KSh {expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0).toFixed(2)}
                     <span className="text-xs block">({expenses.length} items)</span>
                   </div>
                 </div>

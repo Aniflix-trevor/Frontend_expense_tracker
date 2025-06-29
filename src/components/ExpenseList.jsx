@@ -54,7 +54,7 @@ export default function ExpenseList({ expenses, onEdit, onDelete }) {
 
               {/* Amount Cell - Ensures 2 decimal places */}
               <td className="px-4 py-3 whitespace-nowrap text-sm text-text-primary">
-                ${parseFloat(expense.amount).toFixed(2)}
+                Ksh{parseFloat(expense.amount).toFixed(2)}
               </td>
 
               {/* Category Cell - Color-coded badge */}
