@@ -7,6 +7,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   }
 });
+console.log("API URL is:", import.meta.env.VITE_API_URL);
 
 // Interceptor to add JWT token to requests
 api.interceptors.request.use(config => {
