@@ -45,68 +45,7 @@ Built with modern web technologies, ExpenseWise offers a responsive and efficien
 * **Flask-CORS:** For handling Cross-Origin Resource Sharing.
 * **Pipenv:** For dependency management.
 
-## File Structures
 
-### Frontend File Structure
-
-FRONTEND_EXPENSE_TRACKER/
-public # Static assets (images, favicon)
-images
-01000000-0aff-0242-0b7d-08dbae85de45_w1080_h608.avif # Homepage background image
-vite.svg
-src
-api # API service calls and helpers
-categoryService.js  # Functions for interacting with category API endpoints
-expenseService.js   # Functions for interacting with expense API endpoints
-components # Reusable UI components
-CategoryForm.jsx
-CategoryList.jsx
-ExpenseForm.jsx
-ExpenseList.jsx
-Footer.jsx          # Application-wide footer component
-contexts # React Context API for global state management
-AuthContext.jsx     # Manages user authentication state (login, logout, token)
-pages # Top-level page components, directly corresponding to routes
-Dashboard.jsx       # Main user dashboard to manage expenses and categories
-Home.jsx            # The public landing page
-Login.jsx           # User login page
-Register.jsx        # User registration page
-App.css
-App.jsx             # Root application component, handles global layout and routing
-index.css           # Global TailwindCSS directives and custom styles
-main.jsx            # Entry point for the React application, sets up providers (BrowserRouter, AuthProvider)
-Routes.jsx          # Centralized routing configuration using React Router
-.env                    # Environment variables (e.g., VITE_API_BASE_URL)
-.gitignore              # Files/folders to ignore in Git version control
-eslint.config.js        # ESLint configuration for code linting
-index.html              # Main HTML file for the React app
-package-lock.json       # Records exact dependency versions for reproducible builds
-package.json            # Project metadata and script commands
-postcss.config.js       # PostCSS configuration for Tailwind CSS processing
-README.md               # Project documentation (this file!)
-tailwind.config.js      # Tailwind CSS configuration for custom themes, colors, etc.
-vite.config.js          # Vite build configuration
-
-
-### Backend File Structure
-
-EXPENSE_TRACKER_BACKEND/
-instance # Local database files
-expense_tracker.db  # SQLite database file (automatically created if not present)
-migrations # Database migration scripts (managed by Flask-Migrate/Alembic)
-resources # API resource definitions using Flask-RESTful
-categories.py       # API endpoints for managing expense categories
-entries.py          # API endpoints for managing individual expense entries
-users.py            # API endpoints for user authentication (registration, login)
-.gitignore
-add_user.py             # Script to add test users (optional, for development seeding)
-app.py                  # Main Flask application instance and core configuration
-config.py               # Application configuration settings (e.g., database URI)
-extensions.py           # Flask extensions setup (e.g., SQLAlchemy, CORS initialization)
-models.py               # SQLAlchemy database models (User, Category, Entry definitions)
-Pipfile                 # Pipenv dependency definitions (what your project needs)
-Pipfile.lock            # Locked Pipenv dependencies (exact versions for reproducibility)
-requirements.txt        # List of Python dependencies (can be generated from Pipfile.lock)
 
 ## Getting Started (For Developers)
 
